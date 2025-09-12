@@ -1,7 +1,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import TransactionForm from "@/components/ui/transaction-form";
+import TransactionForm from "@/components/transaction-form";
 
 export default function NewTransactionPage() {
     return (
