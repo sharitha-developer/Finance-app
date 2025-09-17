@@ -5,6 +5,8 @@ import { addDays } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { type Category } from "@/types/Category";
+
 // shadcn/ui form primitives
 import {
     Form,
@@ -24,6 +26,7 @@ import {
 import { SelectItem } from "@/components/ui/select"; // same file usually
 
 import * as React from "react"
+import { useMemo } from "react";
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
@@ -37,7 +40,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "./ui/input";
 
-const transactionFormScheme = z.object({
+export const transactionFormScheme = z.object({
     transactionType: z.enum(["income", "expense"]),
     categoryId: z.coerce.number().positive("Please Select a category"),
     transactionDate: z.coerce
@@ -53,7 +56,10 @@ const transactionFormScheme = z.object({
 // ✅ Strongly typed form values
 type TransactionFormValues = z.infer<typeof transactionFormScheme>;
 
-export default function TransactionForm() {
+export default function TransactionForm({ categories, onSubmit }: {
+    categories: Category[];
+    onSubmit: (data: TransactionFormValues) => Promise<void>
+}) {
     const form = useForm<TransactionFormValues>({
         resolver: zodResolver(transactionFormScheme), // ✅ this should now type-check
         defaultValues: {
@@ -65,19 +71,27 @@ export default function TransactionForm() {
         },
     });
 
-    const onHandleSubmit = async (data: TransactionFormValues) => {
 
-    }
+    const transactionType = form.watch("transactionType");
+
+    const filteredCategories = useMemo(() => {
+        return categories.filter(c => c.type === transactionType);
+    }, [categories, transactionType]);
+
 
     return <Form {...form}>
-        <form onSubmit={form.handleSubmit(onHandleSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
             <fieldset className="grid grid-cols-2 gap-y-5 gap-x-2">
                 <FormField control={form.control} name="transactionType" render={({ field }) => {
                     return (
                         <FormItem>
                             <FormLabel>Transaction Type</FormLabel>
                             <FormControl>
-                                <Select onValueChange={field.onChange} value={field.value}>
+                                <Select onValueChange={(newValue) => {
+                                    field.onChange(newValue);
+                                    form.setValue("categoryId", 0)
+                                }} value={field.value}
+                                >
                                     <SelectTrigger className=" w-full">
                                         <SelectValue />
                                     </SelectTrigger>
@@ -105,6 +119,11 @@ export default function TransactionForm() {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
+                                        {filteredCategories.map((category) => (
+                                            <SelectItem key={category.id} value={category.id.toString()}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
 
                                     </SelectContent>
                                 </Select>
