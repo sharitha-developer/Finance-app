@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "./ui/input";
 
-export const transactionFormScheme = z.object({
+export const transactionFormSchema = z.object({
     transactionType: z.enum(["income", "expense"]),
     categoryId: z.coerce.number().positive("Please Select a category"),
     transactionDate: z.coerce
@@ -54,14 +54,14 @@ export const transactionFormScheme = z.object({
 });
 
 // ✅ Strongly typed form values
-type TransactionFormValues = z.infer<typeof transactionFormScheme>;
+type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
 export default function TransactionForm({ categories, onSubmit }: {
     categories: Category[];
     onSubmit: (data: TransactionFormValues) => Promise<void>
 }) {
     const form = useForm<TransactionFormValues>({
-        resolver: zodResolver(transactionFormScheme), // ✅ this should now type-check
+        resolver: zodResolver(transactionFormSchema), // ✅ this should now type-check
         defaultValues: {
             amount: 0,
             categoryId: 0,
@@ -81,7 +81,7 @@ export default function TransactionForm({ categories, onSubmit }: {
 
     return <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <fieldset className="grid grid-cols-2 gap-y-5 gap-x-2">
+            <fieldset disabled={form.formState.isSubmitting} className="grid grid-cols-2 gap-y-5 gap-x-2">
                 <FormField control={form.control} name="transactionType" render={({ field }) => {
                     return (
                         <FormItem>
@@ -171,7 +171,7 @@ export default function TransactionForm({ categories, onSubmit }: {
                     )
                 }} />
             </fieldset>
-            <fieldset className="mt-5 flex flex-col gap-5">
+            <fieldset disabled={form.formState.isSubmitting} className="mt-5 flex flex-col gap-5">
                 <FormField control={form.control} name="description" render={({ field }) => {
                     return (
                         <FormItem>

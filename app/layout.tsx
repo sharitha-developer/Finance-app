@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUp, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./user-dropdown";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -53,7 +54,8 @@ export default function RootLayout({
             </div>
           </nav>
           {children}
-        </body>
+            <Toaster position="top-right" />
+        </body>       
       </html>
     </ClerkProvider>
   );
