@@ -28,6 +28,14 @@ export const createTransaction = async (data: {
     };
   }
 
+   // ✅ add custom business rule (like preventing category 0)
+  if (data.categoryId === 0) {
+    return {
+      error: true,
+      message: "Invalid category",
+    };
+  }
+
   const [transaction] = await db
     .insert(transactionTable)
     .values({

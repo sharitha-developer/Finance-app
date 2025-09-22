@@ -49,13 +49,13 @@ export default function RootLayout({
                 </div>
               </SignedOut>
               <SignedIn>
-                <UserDropdown/> 
+                <UserDropdown />
               </SignedIn>
             </div>
           </nav>
           {children}
-            <Toaster position="top-right" />
-        </body>       
+          <Toaster position="top-right" reverseOrder={false} />
+        </body>
       </html>
     </ClerkProvider>
   );
